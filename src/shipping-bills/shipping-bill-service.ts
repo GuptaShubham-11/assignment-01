@@ -44,8 +44,12 @@ export const shippingBillService = {
    * Fetch flat file text or payload (per shipping_bill.http)
    */
   async getFlatFile(id: string | number) {
-    // Auth + Accept headers are added by the fetcher
-    return get(`/api/shipping-bills/${id}/flat-file`)
+    const blob = await get<Blob>(`/api/shipping-bills/${id}/flat-file`, {
+      responseType: 'blob'
+    })
+
+    const text = await blob.text()
+    return blob.type.includes('application/json') ? JSON.parse(text) : text
   },
 
   /**

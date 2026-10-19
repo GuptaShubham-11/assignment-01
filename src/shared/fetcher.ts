@@ -1,5 +1,4 @@
-export const BASE_URL = (import.meta.env.VITE_BASE_URL || import.meta.env.PUBLIC_API_URL).replace(/\/+$/, '')
-
+export const BASE_URL = import.meta.env.VITE_BASE_URL || import.meta.env.PUBLIC_API_URL;
 if (!BASE_URL) throw new Error('Missing API URL')
 
 const DEFAULT_TIMEOUT = 30_000
@@ -54,7 +53,10 @@ async function fetcher<T>(endpoint: string, config: FetcherOptions = {}): Promis
   const url = /^https?:\/\//i.test(endpoint) ? endpoint : `${BASE_URL}/${endpoint.replace(/^\/+/, '')}`
 
   const headers = new Headers({ Accept: ACCEPT[responseType] })
+  
   const auth = getAuthHeader()
+  if (!auth) throw new Error("Missing auth token");
+
   if (auth) headers.set('Authorization', auth)
   new Headers(customHeaders).forEach((v, k) => headers.set(k, v))
 
